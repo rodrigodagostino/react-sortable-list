@@ -1,0 +1,8 @@
+{
+	"bracketSpacing": true,
+	"printWidth": 100,
+	"singleQuote": true,
+	"trailingComma": "es5",
+	"useTabs": true,
+	"overrides": [{ "files": ["*.json", "*.css"], "options": { "singleQuote": false } }]
+}

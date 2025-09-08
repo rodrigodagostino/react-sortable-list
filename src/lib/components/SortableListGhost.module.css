@@ -1,0 +1,7 @@
+.rsl-ghost {
+	position: fixed;
+	user-select: none;
+	backface-visibility: hidden;
+	visibility: hidden;
+	z-index: 9999;
+}

@@ -1,0 +1,19 @@
+.rsl-root,
+.rsl-root :global(*) {
+	box-sizing: border-box;
+}
+
+.rsl-root {
+	display: flex;
+	flex-wrap: var(--rsl-wrap);
+	padding-inline-start: 0;
+	margin: calc(var(--rsl-gap) / 2 * -1);
+
+	&[aria-orientation="vertical"] {
+		flex-direction: column;
+	}
+
+	&[aria-orientation="horizontal"] {
+		flex-direction: row;
+	}
+}

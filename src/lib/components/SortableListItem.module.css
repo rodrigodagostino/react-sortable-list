@@ -1,0 +1,14 @@
+.rsl-item {
+	margin: calc(var(--rsl-gap) / 2);
+	position: relative;
+	list-style: none;
+	user-select: none;
+	backface-visibility: hidden;
+	z-index: 1;
+
+	&:not(:has([data-role="handle"])),
+	& :global([data-role="handle"]) {
+		touch-action: none;
+		cursor: grab;
+	}
+}

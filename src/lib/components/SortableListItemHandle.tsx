@@ -5,7 +5,7 @@ import styles from './SortableListItemHandle.module.css';
 
 function SortableListItemHandle({ children }: HandleProps) {
 	return (
-		<span className={styles['rsl-handle']} data-role="handle" aria-hidden="true">
+		<span className={styles['rsl-handle']} aria-hidden="true">
 			{Children.count(children) ? <>{children}</> : <Icon name="handle" />}
 		</span>
 	);

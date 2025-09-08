@@ -6,9 +6,63 @@
 	backface-visibility: hidden;
 	z-index: 1;
 
-	&:not(:has([data-role="handle"])),
-	& :global([data-role="handle"]) {
+	&:not(:has([class^="rsl-item-handle"])),
+	& :global([class^="rsl-item-handle"]) {
 		touch-action: none;
 		cursor: grab;
+	}
+
+	&[data-drag-state*="ptr-drag"],
+	&[data-drag-state*="ptr-drag"] :global([class^="rsl-item-handle"]) {
+		cursor: grabbing;
+	}
+
+	&[data-is-locked="true"] {
+		cursor: initial;
+	}
+
+	&[aria-disabled="true"] {
+		cursor: not-allowed;
+
+		& > :global(*) {
+			pointer-events: none;
+		}
+	}
+
+	&:not([data-drag-state="idle"]),
+	&:has(:global(~ *:not([data-drag-state="idle"]))),
+	&:not([data-drag-state="idle"]) ~ :global(*) {
+		transition:
+			width var(--rsl-transition-duration),
+			height var(--rsl-transition-duration),
+			margin var(--rsl-transition-duration),
+			transform var(--rsl-transition-duration),
+			z-index var(--rsl-transition-duration);
+	}
+
+	&[data-is-ghost="true"] {
+		margin: 0;
+		transition: none;
+	}
+
+	&:focus,
+	&:focus-visible,
+	&:focus-within {
+		z-index: 2;
+	}
+
+	&[data-drag-state*="kbd-drag"] {
+		z-index: 4;
+	}
+
+	/* The z-index is different from the one in [data-drag-state*='kbd-drag'] just to force
+		 the «transitionend» event to be fired when the item is dropped using the keyboard. */
+	&[data-drag-state="kbd-drop"],
+	&[data-drag-state="kbd-cancel"] {
+		z-index: 3;
+	}
+
+	&[data-drag-state*="ptr"] {
+		z-index: 0;
 	}
 }

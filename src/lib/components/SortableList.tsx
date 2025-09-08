@@ -1,6 +1,12 @@
 import { Children } from 'react';
 import SortableListGhost from './SortableListGhost';
-import type { SortableListRootProps as RootProps } from '../types';
+import SortableListItem from './SortableListItem';
+import SortableListItemHandle from './SortableListItemHandle';
+import SortableListItemRemove from './SortableListItemRemove';
+import type {
+	SortableListRootProps as RootProps,
+	SortableListItemProps as ItemProps,
+} from '../types';
 import styles from './SortableList.module.css';
 
 function SortableList({ children }: RootProps) {
@@ -20,5 +26,11 @@ function SortableList({ children }: RootProps) {
 		</>
 	);
 }
+
+SortableList.Item = SortableListItem;
+SortableList.ItemHandle = SortableListItemHandle;
+SortableList.ItemRemove = SortableListItemRemove;
+SortableList.Props = {} as RootProps;
+SortableList.ItemProps = {} as ItemProps;
 
 export default SortableList;

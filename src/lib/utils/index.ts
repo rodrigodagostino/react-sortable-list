@@ -1,4 +1,5 @@
 export * from './accessibility.js';
+export * from './auto-scroll.js';
 export * from './collision.js';
 export * from './data-extraction.js';
 export * from './events.js';

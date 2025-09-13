@@ -23,11 +23,18 @@ import { RootContextProvider, useRootContext } from '../contexts/index';
 import {
 	announce,
 	areColliding,
+	getClosestScrollableAncestor,
 	getCollidingItem,
 	getIndex,
 	getItemRects,
+	getScrollingSpeed,
 	getTextDirection,
+	isFullyVisible,
 	isOrResidesInInteractiveElement,
+	isRootElement,
+	isScrollable,
+	scrollIntoView,
+	shouldAutoScroll,
 } from '../utils';
 import styles from './SortableList.module.css';
 
@@ -167,6 +174,52 @@ function SortableListWithinContext(props: RootProps) {
 		});
 	}, [props]);
 
+	const [scrollingSpeed, setScrollingSpeed] = useState(0);
+	const scrollingSpeedRef = useRef(scrollingSpeed);
+	useEffect(() => {
+		scrollingSpeedRef.current = scrollingSpeed;
+	}, [scrollingSpeed]);
+	const scrollableAncestor: HTMLElement | undefined = useMemo(
+		() => getClosestScrollableAncestor(rootRef.current as HTMLElement),
+		[rootRef.current]
+	);
+	const [scrollableAncestorScrollTop, setScrollableAncestorScrollTop] = useState<
+		number | undefined
+	>(0);
+	const [scrollableAncestorScrollLeft, setScrollableAncestorScrollLeft] = useState<
+		number | undefined
+	>(0);
+	const isScrollingDocument = useMemo(
+		() => (scrollableAncestor ? isRootElement(scrollableAncestor, direction) : false),
+		[scrollableAncestor, direction]
+	);
+	useEffect(() => {
+		if (scrollingSpeed !== 0) scroll();
+	}, [scrollingSpeed]);
+
+	function scroll() {
+		if (!scrollableAncestor) return;
+
+		if (typeof window !== 'undefined')
+			requestAnimationFrame(() => {
+				if (!shouldAutoScroll(scrollableAncestor!, direction, scrollingSpeed)) return;
+
+				const x = direction === 'horizontal' ? scrollingSpeed : 0;
+				const y = direction === 'vertical' ? scrollingSpeed : 0;
+				scrollableAncestor!.scrollBy(x, y);
+
+				if (scrollingSpeedRef.current !== 0) scroll();
+			});
+	}
+
+	function autoScroll(clientX: PointerEvent['clientX'], clientY: PointerEvent['clientY']) {
+		if (!scrollableAncestor) return;
+
+		setScrollingSpeed(
+			getScrollingSpeed(scrollableAncestor, clientX, clientY, direction, isScrollingDocument)
+		);
+	}
+
 	const handlePointerDown: PointerEventHandler<HTMLUListElement> = (e) => {
 		if (e.button !== 0 || dragStateRef.current !== 'idle' || focusedItemRef.current) {
 			e.preventDefault();
@@ -291,6 +344,17 @@ function SortableListWithinContext(props: RootProps) {
 				setPointer({ x: clientX, y: clientY });
 				setIsBetweenBounds(areColliding(ghostRect, rootRect));
 
+				// Re-set itemRects only during scrolling.
+				// (setting it here instead of in the `scroll()` function to reduce the performance impact)
+				if (
+					scrollableAncestor?.scrollTop !== scrollableAncestorScrollTop ||
+					scrollableAncestor?.scrollLeft !== scrollableAncestorScrollLeft
+				) {
+					setItemRects(getItemRects(rootRef.current as HTMLUListElement));
+					setScrollableAncestorScrollTop(scrollableAncestor?.scrollTop);
+					setScrollableAncestorScrollLeft(scrollableAncestor?.scrollLeft);
+				}
+
 				const collidingItemRect = ghostRect
 					? getCollidingItem(ghostRect, itemRectsRef.current)
 					: null;
@@ -314,6 +378,8 @@ function SortableListWithinContext(props: RootProps) {
 					isBetweenBounds: isBetweenBounds,
 					canRemoveOnDropOut: canRemoveOnDropOut || false,
 				});
+
+				if (isScrollable(scrollableAncestor, direction)) autoScroll(clientX, clientY);
 
 				setRafId(null);
 			})
@@ -403,6 +469,8 @@ function SortableListWithinContext(props: RootProps) {
 
 						firstItem.focus({ preventScroll: true });
 
+						if (scrollableAncestor && !isFullyVisible(firstItem, scrollableAncestor))
+							scrollIntoView(firstItem, scrollableAncestor, direction, -1, isScrollingDocument);
 						return;
 					}
 
@@ -472,6 +540,19 @@ function SortableListWithinContext(props: RootProps) {
 						canRemoveOnDropOut: canRemoveOnDropOut || false,
 					});
 
+					if (
+						scrollableAncestor &&
+						targetItemRef.current &&
+						!isFullyVisible(targetItemRef.current, scrollableAncestor)
+					)
+						scrollIntoView(
+							targetItemRef.current,
+							scrollableAncestor,
+							direction,
+							step,
+							isScrollingDocument
+						);
+
 					if (targetItemRef.current && typeof targetIndex === 'number')
 						setLiveText(
 							_announcements.dragged(
@@ -482,6 +563,17 @@ function SortableListWithinContext(props: RootProps) {
 							)
 						);
 				}
+
+				requestAnimationFrame(() => {
+					const scrollTarget =
+						dragStateRef.current !== 'kbd-drag' ? focusedItemRef.current : targetItemRef.current;
+					if (
+						scrollTarget &&
+						scrollableAncestor &&
+						!isFullyVisible(scrollTarget, scrollableAncestor)
+					)
+						scrollIntoView(scrollTarget, scrollableAncestor, direction, step, isScrollingDocument);
+				});
 			}
 
 			if (key === 'Home' || key === 'End') {
@@ -549,6 +641,18 @@ function SortableListWithinContext(props: RootProps) {
 							)
 						);
 				}
+
+				requestAnimationFrame(() => {
+					const scrollTarget =
+						dragStateRef.current !== 'kbd-drag' ? focusedItemRef.current : targetItemRef.current;
+					const step = key === 'Home' ? -1 : 1;
+					if (
+						scrollTarget &&
+						scrollableAncestor &&
+						!isFullyVisible(scrollTarget, scrollableAncestor)
+					)
+						scrollIntoView(scrollTarget, scrollableAncestor, direction, step, isScrollingDocument);
+				});
 			}
 
 			if (key === 'Escape' && draggedItemRef.current) {
@@ -596,6 +700,14 @@ function SortableListWithinContext(props: RootProps) {
 			);
 		} else if (action === 'kbd-cancel') {
 			setDragState('kbd-cancel');
+			if (scrollableAncestor)
+				scrollIntoView(
+					draggedItemRef.current,
+					scrollableAncestor,
+					direction,
+					-1,
+					isScrollingDocument
+				);
 			setLiveText(_announcements.canceled(draggedItemRef.current, draggedIndex));
 		}
 
@@ -667,6 +779,7 @@ function SortableListWithinContext(props: RootProps) {
 		setItemRects(null);
 		setIsBetweenBounds(true);
 		setRafId(null); // Required on mobile when transition duration is `0ms` and `rafId` is not cleared during `pointermove`.
+		setScrollingSpeed(0);
 	};
 
 	const handleContextMenu: MouseEventHandler<HTMLUListElement> = (e) => {

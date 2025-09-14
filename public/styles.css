@@ -1,0 +1,154 @@
+:root {
+	--rsl-white-rich: #fff;
+	--rsl-white: #f3f3f5;
+	--rsl-gray-050: #ededf0;
+	--rsl-gray-100: #e1e1e6;
+	--rsl-gray-150: #d2d2da;
+	--rsl-gray-200: #c3c3ce;
+	--rsl-gray-300: #a4a6b5;
+	--rsl-gray-400: #86889d;
+	--rsl-gray-500: #686a84;
+	--rsl-gray-600: #585a70;
+	--rsl-gray-650: #515266;
+	--rsl-gray-700: #494a5c;
+	--rsl-gray-750: #414253;
+	--rsl-gray-800: #393a49;
+	--rsl-gray-850: #31323f;
+	--rsl-gray-900: #2a2a35;
+	--rsl-gray-950: #22222b;
+	--rsl-black: #15151a;
+	--rsl-black-rich: #000;
+
+	--rsl-rose-300: #fda4af;
+	--rsl-rose-400: #fb7185;
+
+	--rsl-box-shadow-1:
+		0 1px 1px rgba(54, 57, 90, 0.1), 0 2px 2px rgba(54, 57, 90, 0.1),
+		0 4px 4px rgba(54, 57, 90, 0.1), 0 6px 8px rgba(54, 57, 90, 0.1),
+		0 8px 16px rgba(54, 57, 90, 0.1);
+	--rsl-box-shadow-2:
+		0 1px 1px rgba(54, 57, 90, 0.1), 0 2px 2px rgba(54, 57, 90, 0.1),
+		0 4px 4px rgba(54, 57, 90, 0.1), 0 8px 8px rgba(54, 57, 90, 0.1),
+		0 16px 16px rgba(54, 57, 90, 0.1);
+	--rsl-box-shadow-3:
+		0 2px 1px rgba(54, 57, 90, 0.1), 0 4px 2px rgba(54, 57, 90, 0.1),
+		0 8px 4px rgba(54, 57, 90, 0.1), 0 12px 8px rgba(54, 57, 90, 0.1),
+		0 24px 16px rgba(54, 57, 90, 0.1);
+	--rsl-box-shadow-4:
+		0 2px 1px rgba(54, 57, 90, 0.1), 0 4px 2px rgba(54, 57, 90, 0.1),
+		0 8px 4px rgba(54, 57, 90, 0.1), 0 16px 8px rgba(54, 57, 90, 0.1),
+		0 32px 16px rgba(54, 57, 90, 0.1);
+}
+
+[class^="rsl-root"] {
+	border-radius: 0.625rem;
+	outline-offset: calc(var(--rsl-gap) / 2 * -1);
+}
+
+[class^="rsl-root"]:focus-visible,
+[class^="rsl-root"] *:focus-visible {
+	outline: 0.125rem solid var(--rsl-gray-800);
+}
+
+[class^="rsl-item"] {
+	border-radius: 0.25rem;
+
+	&[data-is-ghost="false"][data-drag-state*="ptr"] .rsl-item-content {
+		opacity: 0.5;
+
+		& > * {
+			opacity: 0;
+		}
+	}
+}
+
+.rsl-item-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
+	max-width: 18rem;
+	padding: 0.5rem 1.75rem;
+	background-image: radial-gradient(
+		100% 100% at 100% 0,
+		var(--rsl-white) 0,
+		var(--rsl-gray-050) 80%
+	);
+	color: var(--rsl-gray-800);
+	text-shadow: 0 0.0625rem 0.0625rem rgba(45, 35, 66, 0.16);
+	border-radius: 0.25rem;
+	line-height: 1.25;
+	text-transform: uppercase;
+	box-shadow: inset 0 0 0 0.0625rem var(--rsl-gray-300);
+	opacity: 1;
+	transition: box-shadow calc(var(--rsl-transition-duration) / 3 * 2);
+}
+
+.rsl-item-content__text {
+	margin: 0.625rem auto;
+}
+
+[class^="rsl-item"][aria-disabled="true"] .rsl-item-content {
+	opacity: 0.5;
+}
+
+[class^="rsl-item"][data-drag-state*="ptr-drag"][data-is-ghost="true"] .rsl-item-content,
+[class^="rsl-item"][data-drag-state*="kbd-drag"] .rsl-item-content {
+	box-shadow:
+		inset 0 0 0 0.0625rem var(--rsl-gray-300),
+		var(--rsl-box-shadow-1);
+}
+
+[class^="rsl-item-handle"],
+[class^="rsl-item-remove"] {
+	flex-shrink: 0;
+	display: flex;
+	padding: 0.5rem;
+	color: var(--rsl-gray-400);
+	border: none;
+	border-radius: 0.25rem;
+	transition: background-color calc(var(--rsl-transition-duration) / 3 * 2);
+}
+
+[class^="rsl-item"][data-is-ghost="false"] [class^="rsl-item-handle"]:hover,
+[class^="rsl-item-remove"]:focus,
+[class^="rsl-item-remove"]:hover,
+.rsl-item[data-is-ghost="true"][data-drag-state="idle"] [class^="rsl-item-handle"],
+.rsl-item[data-is-ghost="true"][data-drag-state*="ptr-drag"] [class^="rsl-item-handle"] {
+	background-color: var(--rsl-gray-150);
+	color: var(--rsl-gray-700);
+}
+
+[class^="rsl-item-handle"] {
+	margin-inline-start: -1rem;
+}
+
+[class^="rsl-item-remove"] {
+	margin-inline-end: -1rem;
+}
+
+/**
+ * canRemoveOnDropOut
+ */
+[class^="rsl-ghost"][data-can-remove-on-drop-out="true"] .rsl-item-content {
+	transition:
+		background-color calc(var(--rsl-transition-duration) / 3 * 2),
+		border-color calc(var(--rsl-transition-duration) / 3 * 2),
+		box-shadow calc(var(--rsl-transition-duration) / 3 * 2),
+		opacity var(--rsl-transition-duration);
+}
+
+[class^="rsl-ghost"][data-can-remove-on-drop-out="true"]
+	.rsl-item[data-drag-state="ptr-drop"][data-is-between-bounds="false"]
+	.rsl-item-content {
+	opacity: 0;
+}
+
+[class^="rsl-ghost"][data-can-remove-on-drop-out="true"]
+	.rsl-item[data-is-between-bounds="false"]
+	.rsl-item-content {
+	background-color: var(--rsl-rose-300);
+	box-shadow:
+		inset 0 0 0 0.0625rem var(--rsl-rose-400),
+		var(--rsl-box-shadow-1);
+}

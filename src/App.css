@@ -1,42 +1,214 @@
-#root {
-	max-width: 1280px;
-	margin: 0 auto;
-	padding: 2rem;
-	text-align: center;
+/**
+ * Custom properties.
+ */
+:root {
+	--rsl-font-main:
+		"Rubik", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+		"Segoe UI Symbol", "Noto Color Emoji";
+
+	--rsl-white-rich: #fff;
+	--rsl-white: #f3f3f5;
+	--rsl-gray-050: #ededf0;
+	--rsl-gray-100: #e1e1e6;
+	--rsl-gray-150: #d2d2da;
+	--rsl-gray-200: #c3c3ce;
+	--rsl-gray-300: #a4a6b5;
+	--rsl-gray-400: #86889d;
+	--rsl-gray-500: #686a84;
+	--rsl-gray-600: #585a70;
+	--rsl-gray-650: #515266;
+	--rsl-gray-700: #494a5c;
+	--rsl-gray-750: #414253;
+	--rsl-gray-800: #393a49;
+	--rsl-gray-850: #31323f;
+	--rsl-gray-900: #2a2a35;
+	--rsl-gray-950: #22222b;
+	--rsl-black: #15151a;
+	--rsl-black-rich: #000;
+
+	--rsl-box-shadow-1:
+		0 1px 1px rgba(54, 57, 90, 0.1), 0 2px 2px rgba(54, 57, 90, 0.1),
+		0 4px 4px rgba(54, 57, 90, 0.1), 0 6px 8px rgba(54, 57, 90, 0.1),
+		0 8px 16px rgba(54, 57, 90, 0.1);
+	--rsl-box-shadow-2:
+		0 1px 1px rgba(54, 57, 90, 0.1), 0 2px 2px rgba(54, 57, 90, 0.1),
+		0 4px 4px rgba(54, 57, 90, 0.1), 0 8px 8px rgba(54, 57, 90, 0.1),
+		0 16px 16px rgba(54, 57, 90, 0.1);
+	--rsl-box-shadow-3:
+		0 2px 1px rgba(54, 57, 90, 0.1), 0 4px 2px rgba(54, 57, 90, 0.1),
+		0 8px 4px rgba(54, 57, 90, 0.1), 0 12px 8px rgba(54, 57, 90, 0.1),
+		0 24px 16px rgba(54, 57, 90, 0.1);
+	--rsl-box-shadow-4:
+		0 2px 1px rgba(54, 57, 90, 0.1), 0 4px 2px rgba(54, 57, 90, 0.1),
+		0 8px 4px rgba(54, 57, 90, 0.1), 0 16px 8px rgba(54, 57, 90, 0.1),
+		0 32px 16px rgba(54, 57, 90, 0.1);
 }
 
-.logo {
-	height: 6em;
-	padding: 1.5em;
-	will-change: filter;
-	transition: filter 300ms;
-}
-.logo:hover {
-	filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-	filter: drop-shadow(0 0 2em #61dafbaa);
+/**
+ * Reset styles.
+ */
+html {
+	box-sizing: border-box;
 }
 
-@keyframes logo-spin {
-	from {
-		transform: rotate(0deg);
+*,
+*::before,
+*::after {
+	box-sizing: inherit;
+}
+
+/* Reset margins and paddings on most elements */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+p,
+pre,
+blockquote,
+figure,
+hr {
+	margin: 0;
+	padding: 0;
+}
+
+::selection {
+	color: var(--rsl-white);
+	background: var(--rsl-gray-600);
+}
+
+a {
+	color: var(--rsl-indigo-500);
+	transition: outline 240ms;
+	outline: 1px dotted transparent;
+	text-underline-offset: 0.125rem;
+}
+
+a:focus {
+	outline: 1px dotted currentColor;
+}
+
+/* Reset forms and buttons */
+input,
+textarea,
+select,
+button {
+	min-width: 0;
+	background-color: var(--rsl-white);
+	border: 1px solid var(--rsl-gray-400);
+	border-radius: 0.25rem;
+	color: inherit;
+	font: inherit;
+	letter-spacing: inherit;
+
+	&:focus-visible {
+		outline: 0.125rem solid var(--rsl-gray-800);
 	}
-	to {
-		transform: rotate(360deg);
+}
+
+button {
+	border-radius: 0;
+	background-color: transparent;
+}
+
+/* Easy responsive for media elements */
+embed,
+iframe,
+img,
+object,
+video {
+	display: block;
+	max-width: 100%;
+}
+
+/* Useful table styles */
+table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+/**
+ * Base styles.
+ */
+body {
+	font-family: var(--rsl-font-main);
+	font-size: 1rem;
+	line-height: 1.25;
+	color: var(--rsl-gray-800);
+	background-image: linear-gradient(150deg, var(--rsl-gray-100) 50%, var(--rsl-gray-200));
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	display: flex;
+	justify-content: center;
+	min-height: 100vh;
+	min-height: 100dvh;
+}
+
+code {
+	background-color: var(--rsl-gray-200);
+	border-radius: 0.25rem;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+.form {
+	display: flex;
+	max-width: 100%;
+	margin-top: 3rem;
+}
+
+.form-input {
+	flex: 1;
+	border: none;
+	border: 0.0625rem solid var(--rsl-gray-300);
+	padding-inline: 0.75rem;
+	border-radius: 0.25rem;
+
+	&:has(+ .button) {
+		border-right: none;
+		border-radius: 0.25rem 0 0 0.25rem;
 	}
 }
 
-@media (prefers-reduced-motion: no-preference) {
-	a:nth-of-type(2) .logo {
-		animation: logo-spin infinite 20s linear;
+.button {
+	display: flex;
+	align-items: center;
+	height: 3rem;
+	padding: 0.75em 1em;
+	background-color: var(--rsl-gray-800);
+	border: none;
+	border-radius: 0.25rem;
+	color: var(--rsl-white);
+	line-height: 1;
+	text-transform: uppercase;
+	white-space: nowrap;
+	transition: background-color 240ms;
+
+	&:focus-visible,
+	&:hover {
+		background-color: var(--rsl-gray-600);
 	}
-}
 
-.card {
-	padding: 2em;
-}
+	&:active {
+		background-color: var(--rsl-gray-950);
+	}
 
-.read-the-docs {
-	color: #888;
+	input + & {
+		border-radius: 0 0.25rem 0.25rem 0;
+	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@rodrigodagostino/react-sortable-list",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"author": "Rodrigo D’Agostino <rodrigo.dagostino@proton.me>",
 	"license": "MIT",
 	"type": "module",
